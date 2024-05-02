@@ -106,11 +106,11 @@ def flush_cache():
     Cache.flushall()
 
 
-def create_index_redis(json):
 
 def redis_create_index():
     redis_command= "FT.CREATE itemIdx ON JSON PREFIX 1 item: SCHEMA $.campaignId AS campaign_id TEXT $.keywords AS keywords TEXT"
     res = Cache.execute_command()
+    return
 
 def query_cache():
     '''
