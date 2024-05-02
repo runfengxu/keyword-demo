@@ -7,9 +7,14 @@
 
     {% include 'libraries.html' %}
 
+    <style>
+      textarea {
+          width: 100%;
+          height: 100px; /* Adjust this value as needed */
+      }
+  </style>
   </head>
   <body>
-    {% include 'nav.html' %}
     <br>
     <br>
     <br>
@@ -17,13 +22,24 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <h5>Welcome to the Elasticache for Redis Demo</h5>
+          <h5>Welcome to the Keyword Targeting Demo</h5>
         </div>
       </div>
     </div>
     <br>
     <br>
     <br>
+
+    <div>
+      <form action="/indexkeywords" method="POST">
+        <label for="campaignId">campaignId:</label>
+        <input type="text" id="campaignId" name="campaignId"><br><br>
+        <label for="keywords">Keywords:</label><br>
+        <textarea id="keywords" name="keywords"></textarea><br><br>
+        <input type="submit" value="Submit">
+      </form>
+
+    </div>
     <div class="container">
       <div class="row">
         <div class="col">

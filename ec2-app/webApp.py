@@ -43,6 +43,12 @@ def delete_cache_endpoint():
     flush_cache()
     return render_template('delete_cache.html')    
 
+@app.rout("/indexkeywords", methods=["POST"])
+def index_keywords():
+    campaign_id = request.form['campaignId']
+    keywords = request.form['keywords']
+    create_index_redis({"campaignId":campaign_id, "keywords":keywords})
+
 if __name__ == "__main__":
     app.run(debug=False, use_reloader=False, host='0.0.0.0', port=app_port)
     
