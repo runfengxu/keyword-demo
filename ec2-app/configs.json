@@ -1,8 +1,7 @@
 {
-    "region": "us-west-2",
-    "ttl": 60,
-    "app_port": 8008,
-    "max_rows": 500,
-    "stack_name": "ElasticacheDemoCdkAppStack"
-  }
-  
+"region": "us-west-2",
+"ttl": 60,
+"app_port": 8008,
+"max_rows": 500,
+"stack_name": "redis-stack-demo"
+}

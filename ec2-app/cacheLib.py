@@ -1,7 +1,6 @@
 import os
 import json
 import redis
-import pymysql
 import boto3
 import sys
 import os.path
@@ -10,7 +9,7 @@ import requests
 # def store_configs (config_file, configs):
 #     '''
 #     This function stores configurations in a json file.
-#     '''    
+#     '''
 #     with open(config_file, 'w') as fp:
 #         json.dump(configs, fp)
 
@@ -18,7 +17,7 @@ import requests
 def load_configs (config_file):
     '''
     This function loads configurations from a json file.
-    '''     
+    '''
     data = {}
     with open(config_file) as fp:
         data = json.load(fp)
@@ -27,7 +26,7 @@ def load_configs (config_file):
 def get_secret(secret_name,region_name):
     '''
     This function retrieves information from Secrets Manager.
-    ''' 
+    '''
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -78,7 +77,7 @@ def get_secret(secret_name,region_name):
 def get_stack_outputs(stack_name,region_name):
     '''
     This function retrieves all outputs of a stack from CloudFormation.
-    '''     
+    '''
     stack_outputs = {}
     cf_client = boto3.client('cloudformation',region_name=region_name)
     response = cf_client.describe_stacks(StackName=stack_name)
@@ -86,13 +85,8 @@ def get_stack_outputs(stack_name,region_name):
     for output in outputs:
         stack_outputs[output["OutputKey"]] = output["OutputValue"]
 
-    response = get_secret(stack_outputs['secretname'],region_name)
+    #response = get_secret(stack_outputs['secretname'],region_name)
 
-    stack_outputs['db_password'] = response['password']
-    stack_outputs['db_name'] = response['dbname']
-    stack_outputs['db_port'] = response['port']
-    stack_outputs['db_username'] = response['username']
-    stack_outputs['db_host'] = response['host']
 
     return stack_outputs
 
@@ -101,8 +95,8 @@ def get_stack_outputs(stack_name,region_name):
 def flush_cache():
     '''
     This function flushes all records from the cache.
-    '''     
-    
+    '''
+
     Cache.flushall()
 
 
@@ -115,17 +109,17 @@ def redis_create_index():
 def query_cache():
     '''
     This function retrieves records from the cache if it exists, or else gets it from the MySQL database.
-    '''     
-    
+    '''
+
 
     if res:
         print ('Records in cache...')
         return ({'records_in_cache': True, 'data' : res})
-          
+
     res = mysql_fetch_data(sql, db_host, db_username, db_password, db_name)
-    
+
     if res:
-        print ('Cache was empty. Now populating cache...')  
+        print ('Cache was empty. Now populating cache...')
         Cache.setex(sql, ttl, json.dumps(res))
         return ({'records_in_cache': False, 'data' : res})
     else:
@@ -135,18 +129,18 @@ def query_cache():
 def query_mysql_and_cache(sql,db_host, db_username, db_password, db_name):
     '''
     This function retrieves records from the cache if it exists, or else gets it from the MySQL database.
-    '''     
+    '''
 
     res = Cache.get()
 
     if res:
         print ('Records in cache...')
         return ({'records_in_cache': True, 'data' : res})
-          
+
     res = mysql_fetch_data(sql, db_host, db_username, db_password, db_name)
-    
+
     if res:
-        print ('Cache was empty. Now populating cache...')  
+        print ('Cache was empty. Now populating cache...')
         Cache.setex(sql, ttl, json.dumps(res))
         return ({'records_in_cache': False, 'data' : res})
     else:
@@ -156,10 +150,10 @@ def query_mysql_and_cache(sql,db_host, db_username, db_password, db_name):
 # def query_mysql(sql,db_host, db_username, db_password, db_name):
 #     '''
 #     This function retrieve records from the database.
-#     ''' 
+#     '''
 
 #     res = mysql_fetch_data(sql, db_host, db_username, db_password, db_name)
-    
+
 #     if res:
 #         print ('Records in database...')
 #         return res
@@ -170,8 +164,8 @@ def query_mysql_and_cache(sql,db_host, db_username, db_password, db_name):
 #     '''
 #     This function initialize the MySQL database if not already done so and generates
 #     all configurations needed for the application.
-#     ''' 
-   
+#     '''
+
 #     # Initialize Database
 #     print ('Initializing MySQL Database...')
 
@@ -185,9 +179,9 @@ def query_mysql_and_cache(sql,db_host, db_username, db_password, db_name):
 
 #     #Load CSV file into mysql
 #     sql_command = """
-#     LOAD DATA LOCAL INFILE '{0}' 
-#     INTO TABLE covid.articles 
-#     FIELDS TERMINATED BY ',' 
+#     LOAD DATA LOCAL INFILE '{0}'
+#     INTO TABLE covid.articles
+#     FIELDS TERMINATED BY ','
 #     ENCLOSED BY '"'
 #     LINES TERMINATED BY '\n'
 #     IGNORE 1 ROWS;
@@ -219,7 +213,7 @@ region_name = configs['region']
     # Get additional configurations from CloudFormation and save on disk
 stack_outputs = get_stack_outputs(stack_name,region_name)
 for key in stack_outputs.keys():
-    configs[key] = stack_outputs[key] 
+    configs[key] = stack_outputs[key]
 
     # Get all configs. If database was not initialized, it will be populated with sample data.
     # initialize_database(configs)

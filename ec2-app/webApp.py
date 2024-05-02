@@ -25,25 +25,25 @@ def query_mysql_endpoint():
 
 @app.route("/query_cache")
 def query_cache_endpoint():
-    data = None 
+    data = None
     start_time = datetime.now()
     result = query_mysql_and_cache(sql,configs['db_host'], configs['db_username'], configs['db_password'], configs['db_name'])
-    delta = (datetime.now() - start_time).total_seconds()    
+    delta = (datetime.now() - start_time).total_seconds()
 
     if isinstance(result['data'], list):
         data = result['data']
     else:
         data = json.loads(result['data'])
 
-    return render_template('query_cache.html', delta=delta, data=data, records_in_cache=result['records_in_cache'], 
+    return render_template('query_cache.html', delta=delta, data=data, records_in_cache=result['records_in_cache'],
                                 TTL=Cache.ttl(sql), sql=sql, fields=db_tbl_fields)
 
 @app.route("/delete_cache")
 def delete_cache_endpoint():
     flush_cache()
-    return render_template('delete_cache.html')    
+    return render_template('delete_cache.html')
 
-@app.rout("/indexkeywords", methods=["POST"])
+@app.route("/indexkeywords", methods=["POST"])
 def index_keywords():
     campaign_id = request.form['campaignId']
     keywords = request.form['keywords']
@@ -51,4 +51,3 @@ def index_keywords():
 
 if __name__ == "__main__":
     app.run(debug=False, use_reloader=False, host='0.0.0.0', port=app_port)
-    
