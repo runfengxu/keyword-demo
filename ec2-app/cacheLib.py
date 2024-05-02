@@ -213,13 +213,13 @@ max_rows = configs['max_rows'] #max # of rows to query from database
 region_name = configs['region']
 
 
-# If datbase is not populated, retrieve endpoints for the database, cache and compute instance from CloudFormation and populate the database
-if configs['database_populated'] is False:
+# # If datbase is not populated, retrieve endpoints for the database, cache and compute instance from CloudFormation and populate the database
+# if configs['database_populated'] is False:
 
     # Get additional configurations from CloudFormation and save on disk
-    stack_outputs = get_stack_outputs(stack_name,region_name)
-    for key in stack_outputs.keys():
-        configs[key] = stack_outputs[key] 
+stack_outputs = get_stack_outputs(stack_name,region_name)
+for key in stack_outputs.keys():
+    configs[key] = stack_outputs[key] 
 
     # Get all configs. If database was not initialized, it will be populated with sample data.
     # initialize_database(configs)
@@ -227,9 +227,11 @@ if configs['database_populated'] is False:
     # store_configs (config_file, configs)
 
 # Initialize the cache
-Cache = redis.Redis.from_url('redis://' + configs['redisendpoint'] + ':6379')
-print("initialized redis cache success")
-redis_create_index()
+
+# Cache = redis.Redis.from_url('redis://' + configs['redisendpoint'] + ':6379')
+# print("initialized redis cache success")
+
+# redis_create_index()
 
 # db_table = 'articles'
 # db_tbl_fields = ['OBJECTID', 'Sentence', 'Title', 'Source']
